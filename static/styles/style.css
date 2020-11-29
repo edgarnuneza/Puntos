@@ -1,0 +1,84 @@
+.canvas{
+	display: inline-flex;
+	width: 800px;
+	height: 600px;
+	border: solid #008CBA;
+}
+
+.opciones{
+	display: inline;
+}
+
+.button {
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-flex;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+}
+
+.agregar_pts {
+	background-color: #4CAF50;
+	display: block;
+}
+.borrar_pts {
+	background-color: #008CBA;
+	display: block;
+} 
+
+.guardar_img {
+	background-color: #008CBA;
+	display: block;
+} 
+
+.color1{
+	background-color: #F10D0D;
+}
+
+.color2{
+	background-color: #4679E7;
+}
+
+.color3{
+	background-color: #FFA500;
+}
+
+.color4{
+	background-color: #CA248E;
+}
+
+.color5{
+	background-color: #36CA24;
+}
+
+.colores{
+	position: relative;
+	left: 20px;
+}
+
+main{
+	position: absolute;
+	top: 60px;
+	left: 400px;
+}
+
+.guardado{
+	display: inline;
+	position: relative;
+	top:15px;
+	left: 15px;
+}
+
+.opciones{
+	position: relative;
+	left: 580px;
+	top: -30px;
+}
+
+body{
+    overflow-x: hidden;
+}

@@ -3,21 +3,21 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from model import Usuario, Imagen
 from sqlalchemy.exc import IntegrityError
+import os
+from werkzeug.utils import secure_filename
+from json_file import crear_json_file, leer_json_file
 
 app = Flask(__name__)
 
+app.config['UPLOAD_FOLDER'] = './static/imagenes_subidas'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/imagen_puntos'
 
 db = SQLAlchemy(app)
+current_user = None
+current_image = None
 
 @app.route('/')
 def index():
-    #Create
-    imagen = Imagen(nombre='img1', user_name='juanpz', ruta='fasd', ruta_puntos='bsdfv')
-    #usuario = Usuario(user_name=5, nombre='hevtot', apellido='Hernandez', contrasena='123', ultimo_acceso=5)
-    db.session.add(imagen)
-    db.session.commit()
-
     #Read
     #usuarios_leidos = Usuario.query.all()
 
@@ -33,9 +33,6 @@ def index():
     #db.session.commit()
     return 'Que rollo'
 
-    #return render_template("inicio.html", usuarios=usuarios_leidos)
-    #return render_template("inicio.html")
-
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
@@ -46,9 +43,11 @@ def login():
         
         if user is not None:
             if user.password == posible_password:
-                return 'Login correcto'
+                global current_user
+                current_user = user
+                return redirect(url_for("edicion"))
             else:
-                return 'Contraseña incorrecta'
+                return 'MAl'
         else:
             return 'Contraseña incorrecta'
     else:
@@ -73,6 +72,52 @@ def registro():
     else:
         return render_template('register.html')
 
-#Si se ejecuta este archivo directamente, corre la apliacion. 
+@app.route('/subir')
+def subir():
+    return render_template("subir_imagen.html")
+
+
+@app.route("/subir_imagen", methods=['POST'])
+def uploader():
+    if request.method == 'POST':
+        f = request.files['archivo']
+        filename = secure_filename(f.filename)
+
+        imagen = Imagen(nombre=filename, user_name=current_user.user_name, ruta='.', ruta_puntos='.')
+        
+        db.session.add(imagen)
+        db.session.commit()
+        db.session.flush()
+        
+        nombre_guardar = imagen.id_imagen
+        
+        crear_json_file(str(nombre_guardar))
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], str(nombre_guardar) + ".png"))
+
+        imagen.ruta = '/static/imagenes_subidas/' + str(nombre_guardar) + '.png'
+        imagen.ruta_puntos = 'coordenadas/' + str(nombre_guardar) + '.txt'
+        db.session.commit()
+
+        return "<h1>Archivo subido exitosamente</h1>"
+
+@app.route("/edicion", methods=['POST', 'GET'])
+def edicion():
+    if not current_user:
+        return redirect(url_for("login"))
+    
+    imagenes_guardadas = Imagen.query.filter_by(user_name=current_user.user_name).all()
+    nombre_imagenes = []
+    
+    for imagen in imagenes_guardadas:
+        nombre_imagenes.append(imagen.nombre)
+    
+    puntos = leer_json_file('juego')
+    
+    return render_template("manejo_imagen.html", ubicacion_imagen='/static/imagenes_subidas/7.png', nombre_imagenes=nombre_imagenes, puntos=puntos)
+
+@app.route('/imagen')
+def imagen():
+    return render_template("imagen.html")
+
 if __name__ == '__main__':
     app.run(debug=True) 

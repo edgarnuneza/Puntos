@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title%} Editor  {% endblock %}
+{%block content%}
+    <aside class="guardado">
+        {%for name in nombre_imagenes%}
+            <p>{{ name }}</p>
+        {% endfor %}
+
+        <form action="subir_imagen" method="POST" enctype="multipart/form-data">
+            <input type="file" name="archivo" required><br><br>
+            <button class='btn btn-outline-success my-2 my-sm-0' type="submit">Subir imagen</button>
+        </form>
+    </aside>
+
+    <main>
+        <canvas id="canvas" width="600" height="527"></canvas>
+
+        <div class="colores">
+            <button class="button color1" onclick="cambiarColor('#F10D0D')"></button>
+            <button class="button color2" onclick="cambiarColor('#4679E7')"></button>
+            <button class="button color3" onclick="cambiarColor('#FFA500')"></button>
+            <button class="button color4" onclick="cambiarColor('#CA248E')"></button>
+            <button class="button color5" onclick="cambiarColor('#36CA24')"></button>
+        </div>
+    </main>
+
+    <aside class="opciones">
+        <div class="opciones">
+            <button class="button agregar_pts" onclick="agregar()">Agregar Puntos</button>
+            <button class="button borrar_pts" onclick="borrar()">Borrar Puntos</button>
+            <!--form action="#" method="post"-->
+                <button class="button guardar_img" type="submit" onclick="guardar()">Guardar imagen</button>
+            <!--/form-->
+        </div>
+    </aside>
+
+    <script >
+        var ubicacion_imagen = "{{ ubicacion_imagen }}";
+        var puntos = JSON.parse('{{ puntos | tojson | safe}}');
+    </script>
+    <script src="{{ url_for('static', filename='scripts/class.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/events.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/shapes.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+    
+{%endblock%}
