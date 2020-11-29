@@ -105,6 +105,12 @@ function guardar()
 	var asJSON = JSON.stringify(puntos);
 	console.log(asJSON);
 }
+
+function cambiarImagen(nombreImagen)
+{
+	input = document.getElementById("nombre_imagen");
+	input.value = nombreImagen;
+}
         /*ce.keydown("del", function(c, e){
 
         	console.log(c);

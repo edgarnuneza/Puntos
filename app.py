@@ -105,19 +105,37 @@ def edicion():
     if not current_user:
         return redirect(url_for("login"))
     
-    imagenes_guardadas = Imagen.query.filter_by(user_name=current_user.user_name).all()
+    imagenes_guardadas = Imagen.query.filter_by(user_name=current_user.user_name).order_by(Imagen.id_imagen.desc()).all()
+
     nombre_imagenes = []
     
     for imagen in imagenes_guardadas:
         nombre_imagenes.append(imagen.nombre)
     
-    puntos = leer_json_file('juego')
+    global current_image
     
-    return render_template("manejo_imagen.html", ubicacion_imagen='/static/imagenes_subidas/7.png', nombre_imagenes=nombre_imagenes, puntos=puntos)
+    if not current_image:
+        current_image = imagenes_guardadas[0]
+        print(current_image.id_imagen)
+    
+    puntos = leer_json_file(str(current_image.id_imagen))
+    
+    return render_template("manejo_imagen.html", ubicacion_imagen='/static/imagenes_subidas/' + str(current_image.id_imagen) +'.png', nombre_imagenes=nombre_imagenes, puntos=puntos)
 
 @app.route('/imagen')
 def imagen():
     return render_template("imagen.html")
+
+@app.route('/cambiar_imagen', methods=['POST'])
+def cambiar_imagen():
+    if request.method == 'POST':
+        global current_image
+        nombre_nueva_imagen = request.form['current_image']
+        imagen = Imagen.query.filter_by(nombre=nombre_nueva_imagen).first()
+
+        current_image = imagen
+
+        return redirect(url_for("edicion"))
 
 if __name__ == '__main__':
     app.run(debug=True) 
