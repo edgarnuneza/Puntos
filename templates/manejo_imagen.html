@@ -3,10 +3,13 @@
 {%block content%}
     <aside class="guardado">
         <form action="cambiar_imagen" method="POST">
-            <input id="nombre_imagen" type="text" name="current_image">
-            {%for name in nombre_imagenes%}
-                <button class='btn btn-outline-success my-2 my-sm-0' onclick="cambiarImagen('{{ name }}')" type="submit">{{ name }}</button>
-            {% endfor %}
+            <input id="nombre_imagen" type="text" name="current_image" hidden>
+            
+            <div class="btn-group-vertical">
+                {%for name in nombre_imagenes%}
+                    <button class="btn-block" onclick="cambiarImagen('{{ name }}')" type="submit">{{ name }}</button>
+                {% endfor %}
+            </div>
         </form>
 
         <form action="subir_imagen" method="POST" enctype="multipart/form-data">
