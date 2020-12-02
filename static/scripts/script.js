@@ -106,11 +106,28 @@ function guardar()
 	console.log(asJSON);
 }
 
-function cambiarImagen(nombreImagen)
+/*function cambiarImagen(nombreImagen)
 {
 	input = document.getElementById("nombre_imagen");
 	input.value = nombreImagen;
+}*/
+
+function cambiarImagen(nombreImagen, isDelete)
+{
+	input = document.getElementById("nombre_imagen");
+	input.value = nombreImagen;
+	borrar = document.getElementById("status");
+	borrar.value = isDelete;
+
+	if(isDelete == "true")
+	{
+		formulario = document.getElementById("lista_imagenes");
+		formulario.action = "borrar_imagen";
+		console.log(formulario.action);
+	}
 }
+
+
         /*ce.keydown("del", function(c, e){
 
         	console.log(c);

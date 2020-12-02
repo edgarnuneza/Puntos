@@ -67,10 +67,10 @@ main{
 }
 
 .guardado{
-	display: inline;
-	position: relative;
-	top:15px;
-	left: 15px;
+	/*display: inline;*/
+	position: absolute;
+	top: 10%;
+	left: 1%;
 }
 
 .opciones{
@@ -86,3 +86,7 @@ body{
 /*.imagenes{
 	display: block;
 }*/
+
+.lista-imagenes{
+	width: 200px;
+}

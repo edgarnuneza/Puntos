@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <form method="POST">
+        <input id='info' type="text" name='json'>
+        <button onclick="jsonFile()" type="submit">Enviar</button>
+
+    </form>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script>
+         var cars = [
+            { "make":"Porsche", "model":"911S" },
+            { "make":"Mercedes-Benz", "model":"220SE" },
+            { "make":"Jaguar","model": "Mark VII" }
+        ];
+        function jsonFile(){
+            input =  document.getElementById("info");
+            input.value = cars;
+        }
+    </script>
+    <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript">
+        // setup some JSON to use
+        var cars = [
+            { "make":"Porsche", "model":"911S" },
+            { "make":"Mercedes-Benz", "model":"220SE" },
+            { "make":"Jaguar","model": "Mark VII" }
+        ];
+        window.onload = function() {
+            // setup the button click
+            document.getElementById("theButton").onclick = function() {
+                doWork()
+            };
+        }
+        function doWork() {
+            // ajax the JSON to the server
+            $.post("receiver", cars, function(){
+            });
+            // stop link reloading the page
+        event.preventDefault();
+        }
+        </script>
+        This will send data using AJAX to Python:<br /><br />
+        <a id="theButton">Click Me</a-->
+            
+</body>
+</html>

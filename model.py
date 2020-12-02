@@ -15,7 +15,7 @@ class Usuario(db.Model):
     nombre = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(15), nullable=False)
 
-class Imagen(db.Model):
+class Imagen(db.Model): 
     __tablename__ = 'imagen'
     id_imagen = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
