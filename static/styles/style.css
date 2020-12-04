@@ -74,9 +74,9 @@ main{
 }
 
 .opciones{
-	position: relative;
-	left: 580px;
-	top: -30px;
+	position: absolute;
+	right: 3%;
+	top:  60px;
 }
 
 body{

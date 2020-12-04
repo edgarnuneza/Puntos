@@ -103,7 +103,10 @@ function guardar()
 		puntos.push(nuevoPunto);
 	}
 	var asJSON = JSON.stringify(puntos);
-	console.log(asJSON);
+	
+	input = document.getElementById("puntos-json");
+	input.value = asJSON;
+	document.getElementById("guardar_puntos").submit();
 }
 
 /*function cambiarImagen(nombreImagen)
@@ -125,6 +128,13 @@ function cambiarImagen(nombreImagen, isDelete)
 		formulario.action = "borrar_imagen";
 		console.log(formulario.action);
 	}
+}
+
+function ponerRuta(ruta){
+	input = document.getElementById("img");
+	input.value = ruta;
+	document.getElementById("form").submit();
+	console.log('Se envio')
 }
 
 

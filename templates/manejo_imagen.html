@@ -2,7 +2,7 @@
 {% block title%} Editor  {% endblock %}
 {%block content%}
 
-    <aside class="guardado">
+    <!--aside class="guardado">
         <form id="lista_imagenes" action="cambiar_imagen" method="POST">
             <input id="nombre_imagen" type="text" name="current_image">
             <input id="status" type="text" name="borrar">
@@ -27,7 +27,7 @@
             <input type="file" name="archivo" required><br><br>
             <button class='btn btn-outline-success my-2 my-sm-0' type="submit">Subir imagen</button>
         </form>
-    </aside>
+    </aside-->
 
     
 
@@ -47,11 +47,13 @@
         <div class="opciones">
             <button class="button agregar_pts" onclick="agregar()">Agregar Puntos</button>
             <button class="button borrar_pts" onclick="borrar()">Borrar Puntos</button>
-            <!--form action="#" method="post"-->
-                <button class="button guardar_img" type="submit" onclick="guardar()">Guardar imagen</button>
-            <!--/form-->
+            <button class="button guardar_img" type="submit" onclick="guardar()">Guardar imagen</button>
         </div>
     </aside>
+
+    <form id="guardar_puntos" action="guardar" method="POST">
+        <input id="puntos-json" name="puntos" type="text" >
+    </form>
 
     <script >
         var ubicacion_imagen = "{{ ubicacion_imagen }}";

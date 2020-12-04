@@ -2,10 +2,12 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import DetachedInstanceError
 import os
 from werkzeug.utils import secure_filename
 from json_file import crear_json_file, leer_json_file
 from sqlalchemy import ForeignKey
+import json
 
 app = Flask(__name__)
 
@@ -13,6 +15,7 @@ app.config['UPLOAD_FOLDER'] = './static/imagenes_subidas'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/imagen_puntos'
 
 db = SQLAlchemy(app)
+db.session.expire_on_commit = False
 current_user = None
 current_image = None
 
@@ -32,20 +35,7 @@ class Imagen(db.Model):
 
 @app.route('/')
 def index():
-    #Read
-    #usuarios_leidos = Usuario.query.all()
-
-    #Update
-    #user = Usuario.query.filter_by(user_name=5).first()
-    #user.nombre = 'fiesta'
-    #db.session.commit()
-
-    #Delete
-    id = 22
-    user = Imagen.query.filter_by(id_imagen=id).first()
-    db.session.delete(user)
-    db.session.commit()
-    return 'Que rollo'
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -55,11 +45,11 @@ def login():
         
         user = Usuario.query.filter_by(user_name=user_name).first()
         
-        if user is not None:
+        if user:
             if user.password == posible_password:
                 global current_user
                 current_user = user
-                return redirect(url_for("edicion"))
+                return redirect(url_for("seleccionar"))
             else:
                 return 'MAl'
         else:
@@ -79,19 +69,13 @@ def registro():
         try:
             db.session.add(usuario)
             db.session.commit()
-            db.session.close()
-            current_user = usuario
+            
         except IntegrityError:
             return 'Este nombre de usuario ya existe'
         
-        return redirect(url_for('edicion'))
+        return redirect(url_for('login'))
     else:
         return render_template('register.html')
-
-@app.route('/subir')
-def subir():
-    return render_template("subir_imagen.html")
-
 
 @app.route("/subir_imagen", methods=['POST'])
 def uploader():
@@ -114,35 +98,26 @@ def uploader():
         imagen.ruta_puntos = 'coordenadas/' + str(nombre_guardar) + '.txt'
         db.session.commit()
         db.session.flush()
+        
         global current_image 
-        current_image = None
+        current_image = imagen.id_imagen
         
         return redirect(url_for('edicion'))
 
-@app.route("/edicion", methods=['POST', 'GET'])
+@app.route("/edicion", methods=['GET'])
 def edicion():
+    global current_user
+    global current_image
+    
     if not current_user:
         return redirect(url_for("login"))
 
-    imagenes_guardadas = Imagen.query.filter_by(user_name=current_user.user_name).order_by(Imagen.id_imagen.desc()).all()
-    nombre_imagenes = []
-    
-    for imagen in imagenes_guardadas:
-        nombre_imagenes.append(imagen.nombre)
-    
-    global current_image
-    
     if not current_image:
-        current_image = imagenes_guardadas[0]
-        
-    #Solucionar cuando hay usuario nuevo y no hay imagenes aun
-    puntos = leer_json_file(str(current_image.id_imagen))
+        return redirect(url_for('seleccionar'))
+    
+    puntos = leer_json_file(str(current_image))
 
-    return render_template("manejo_imagen.html", ubicacion_imagen='/static/imagenes_subidas/' + str(current_image.id_imagen) +'.png', nombre_imagenes=nombre_imagenes, puntos=puntos)
-
-@app.route('/imagen')
-def imagen():
-    return render_template("imagen.html")
+    return render_template("manejo_imagen.html", ubicacion_imagen='/static/imagenes_subidas/' + str(current_image) +'.png', puntos=puntos)
 
 @app.route('/cambiar_imagen', methods=['POST'])
 def cambiar_imagen():
@@ -151,7 +126,7 @@ def cambiar_imagen():
     nombre_nueva_imagen = request.form['current_image']
     imagen = Imagen.query.filter_by(nombre=nombre_nueva_imagen).first()
     
-    current_image = imagen
+    current_image = imagen.id_imagen
     
     return redirect(url_for("edicion"))
 
@@ -170,6 +145,36 @@ def borrar_imagen():
     current_image = None
 
     return redirect(url_for('edicion'))
+
+@app.route('/seleccionar')
+def seleccionar():
+    global current_user
+    global current_image
+    
+    current_image = None
+    imagenes_guardadas = Imagen.query.filter_by(user_name=current_user.user_name).order_by(Imagen.id_imagen.desc()).all()
+    
+    return render_template('escoger_imagen.html', imagenes=imagenes_guardadas)    
+
+@app.route('/guardar', methods=['POST'])
+def guardar():
+    global current_image
+    puntos = request.form['puntos']
+    
+    _puntos = json.loads(puntos)
+    
+    with open('coordenadas/'+ str(current_image) +'.txt', 'w') as outfile:
+        json.dump(_puntos, outfile)
+    
+    return redirect(url_for('edicion'))
+    
+@app.route('/enviar_imagen', methods=['POST'])
+def enviarimg():
+    id_imagen = request.form['id']
+    global current_image
+    current_image = id_imagen
+    return redirect(url_for('edicion'))
+
 
 if __name__ == '__main__':
     app.run(debug=True) 

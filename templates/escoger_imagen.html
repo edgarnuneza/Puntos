@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Slider</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/swiper.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style2.css') }}">
+</head>
+<body>
+
+    <div class="swiper-container">
+        
+            <div class="swiper-wrapper">
+                {% if not imagenes %}
+                <form action="subir_imagen" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="archivo" required><br><br>
+                    <button class='btn btn-outline-success my-2 my-sm-0' type="submit">Subir imagen</button>
+                </form>
+                {% else %}
+                    {% for imagen in imagenes %}
+                    <div class="swiper-slide" style="background-image:url({{imagen.ruta}})">
+                        <div class="info">
+                            <button onclick="ponerRuta('{{ imagen.id_imagen }}')">{{ imagen.nombre }}</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="swiper-pagination"></div>
+    </div>
+    
+    <form id="form" action="enviar_imagen" method="POST">
+        <input id="img" type="text" name="id">
+    </form>    
+    
+
+    <script src="{{ url_for('static', filename='scripts/swiper.min.js') }}"></script>
+    <script>
+        var swiper = new Swiper('.swiper-container', {
+            effect: 'coverflow',
+            grabCursor: true,
+            centeredSlides: true,
+            slidesPerView: 'auto',
+            coverflowEffect: {
+            rotate: 60,
+            stretch: 0,
+            depth: 100,
+            modifier: 5,
+            slideShadows : true,
+            },
+            pagination: {
+            el: '.swiper-pagination',
+            },
+        });
+    </script>
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+</body>
+</html>
